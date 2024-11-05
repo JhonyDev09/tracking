@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id Int @default(autoincrement()) @id
+  nombre String @db.VarChar(100)
+  apellidos String @db.VarChar(100)
+  numTel Int
+  email String @unique @db.VarChar(100)
+  nombreUsuario String @unique @db.VarChar(50)
+  contrasena String @db.VarChar(50)
+  rol Rol
+  vehiculo Vehiculo[]
+}
+
+model Dispositivo {
+  id Int @default(autoincrement()) @id
+  nombre String @db.VarChar(100)
+  imei String @db.VarChar(50)
+  numTel String @db.VarChar(20)
+  icc String @db.VarChar(25)
+  vehiculos Vehiculo[]
+  Datos Dato[]
+  comandos Comando[]
+}
+
+
+model Marca {
+  id Int @default(autoincrement()) @id
+  marca String @db.VarChar(50)
+  vehiculos Vehiculo[]
+}
+
+model Modelo {
+  id Int @default(autoincrement()) @id
+  modelo String @db.VarChar(50)
+  vehiculos Vehiculo[]
+}
+
+model Color {
+  id Int @default(autoincrement()) @id
+  color String @db.VarChar(50)
+  hexadecimal String @db.VarChar(20)
+  vehiculos Vehiculo[]
+}
+
+model Tipo {
+  id Int @default(autoincrement()) @id
+  tipo String @db.VarChar(50)
+  vehiculos Vehiculo[]
+}
+
+model Status {
+  id Int @default(autoincrement()) @id
+  estatus String @db.VarChar(50)
+  vehiculos Vehiculo[]
+}
+
+model Vehiculo {
+  id Int @default(autoincrement()) @id
+  numSerie String @db.VarChar(100)
+  marca Marca @relation(fields: [marcaId], references: [id])
+  marcaId Int
+  modelo Modelo @relation(fields: [modeloId], references: [id])
+  modeloId Int
+  color Color @relation(fields: [colorId], references: [id])
+  colorId Int
+  ano Int
+  placas String @db.VarChar(20)
+  tipo Tipo @relation(fields: [tipoId], references: [id])
+  tipoId Int
+  dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
+  dispositivoId Int
+  chofer Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  estatus Status @relation(fields: [estatusId], references: [id])
+  estatusId Int
+  descripcion String @db.Text
+}
+
+model Dato {
+  id Int @default(autoincrement()) @id
+  latitud String @db.VarChar(100)
+  longitud String @db.VarChar(100)
+  fechahra DateTime
+  velocidad Int
+  combustible Float
+  dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
+  dispositivoId Int
+}
+
+model Comando {
+  id Int @default(autoincrement()) @id
+  nombre String
+  comando String
+  descripcion String
+  dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
+  dispositivoId Int
+}
+
+enum Rol {
+  ADMIN
+  CHOFER
+  MONITORISTA
+}
