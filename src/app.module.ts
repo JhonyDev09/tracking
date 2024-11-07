@@ -13,10 +13,10 @@ import { Dato } from './datos/entities/dato.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'database-1.ctwks8qa0png.us-east-2.rds.amazonaws.com',
       port: 3306,
-      username: 'root',
-      password: '',
+      username: 'admin',
+      password: 'olivarsoto09',
       database: 'tracking',
       entities: [Dispositivo, Dato],
       synchronize: true,
