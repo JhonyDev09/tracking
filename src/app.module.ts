@@ -8,6 +8,8 @@ import { DispositivosModule } from './dispositivos/dispositivos.module';
 import { DatosModule } from './datos/datos.module';
 import { Dispositivo } from './dispositivos/entities/dispositivo.entity';
 import { Dato } from './datos/entities/dato.entity';
+import { ConfigModule } from '@nestjs/config';
+
 
 @Module({
   imports: [
@@ -20,6 +22,10 @@ import { Dato } from './datos/entities/dato.entity';
       database: 'tracking',
       entities: [Dispositivo, Dato],
       synchronize: true,
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true, // Hace que ConfigModule esté disponible en toda la aplicación sin necesidad de importarlo en cada módulo
+      envFilePath: '.env', // Ruta al archivo .env (por defecto ya busca .env en el root)
     }),
     UsuariosModule,
     UnidadesModule,

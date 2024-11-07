@@ -17,15 +17,14 @@ export class DatosService {
 
   async saveData(createDatoDto: CreateDatoDto) {
     const { imei, latitud, longitud, velocidad, combustible, fechahra } = createDatoDto;
-
+  
     // Buscar dispositivo por IMEI
     const dispositivo = await this.dispositivoRepository.findOne({ where: { imei } });
-
     if (!dispositivo) {
       throw new Error('Dispositivo no encontrado');
     }
-
-    // Crear un nuevo dato y relacionarlo con el dispositivo
+  
+    // Crear y guardar un nuevo dato relacionado con el dispositivo
     const nuevoDato = this.datoRepository.create({
       latitud,
       longitud,
@@ -34,8 +33,8 @@ export class DatosService {
       fechahra,
       dispositivo,
     });
-
-    // Guardar el dato en la base de datos
+  
     return await this.datoRepository.save(nuevoDato);
   }
+  
 }

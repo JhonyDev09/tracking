@@ -22,5 +22,5 @@ export class CreateDatoDto {
   combustible: number;
 
   @IsNotEmpty()
-  fechahra: Date;
+  fechahra: string;
 }

@@ -2,7 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { DatosService } from './datos.service';
 import { CreateDatoDto } from './dto/create-dato.dto';
 
-@Controller()
+@Controller('/')
 export class DatosController {
   constructor(private readonly datosService: DatosService) {}
 
