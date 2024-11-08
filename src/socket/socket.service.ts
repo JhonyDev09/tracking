@@ -19,7 +19,9 @@ export class SocketService {
 
       socket.on('data', async (data) => {
         const message = data.toString();
-        this.logger.log(`Datos recibidos: ${message}`);
+        
+        // Log de datos crudos
+        this.logger.log(`Datos recibidos (crudo): ${message}`);
 
         try {
           await this.handleIncomingData(message);
@@ -45,7 +47,12 @@ export class SocketService {
   private async handleIncomingData(message: string) {
     const parsedData = this.parseGPSData(message);
 
-    const dispositivo = await this.datosService.findDispositivoByImei(parsedData.imei);  // Utiliza el servicio de datos
+    if (!parsedData.imei) {
+      this.logger.error('No se pudo extraer el IMEI de los datos recibidos.');
+      throw new Error('IMEI no encontrado en los datos recibidos');
+    }
+
+    const dispositivo = await this.datosService.findDispositivoByImei(parsedData.imei);
     if (!dispositivo) {
       this.logger.error('Dispositivo no encontrado con IMEI: ' + parsedData.imei);
       throw new Error('Dispositivo no encontrado');
@@ -70,16 +77,28 @@ export class SocketService {
     velocidad: number;
     combustible: number;
     fechahra: string;
-  } {
-    const [imei, latitud, longitud, velocidad, combustible, fechahra] = data.split(',');
+  } | null {
+    try {
+      // Realizar el split y verificar si todos los campos existen
+      const [imei, latitud, longitud, velocidad, combustible, fechahra] = data.split(',');
 
-    return {
-      imei,
-      latitud,
-      longitud,
-      velocidad: parseInt(velocidad, 10),
-      combustible: parseInt(combustible, 10),
-      fechahra,
-    };
+      if (!imei || !latitud || !longitud || !velocidad || !combustible || !fechahra) {
+        this.logger.error('Formato de datos recibido incompleto o incorrecto.');
+        return null;
+      }
+
+      // Retornar los datos parseados en el formato esperado
+      return {
+        imei,
+        latitud,
+        longitud,
+        velocidad: parseInt(velocidad, 10),
+        combustible: parseInt(combustible, 10),
+        fechahra,
+      };
+    } catch (error) {
+      this.logger.error(`Error al parsear los datos GPS: ${error.message}`);
+      return null;
+    }
   }
 }
