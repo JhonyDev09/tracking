@@ -9,6 +9,7 @@ import { DatosModule } from './datos/datos.module';
 import { Dispositivo } from './dispositivos/entities/dispositivo.entity';
 import { Dato } from './datos/entities/dato.entity';
 import { ConfigModule } from '@nestjs/config';
+import { SocketModule } from './socket/socket.module';
 
 
 @Module({
@@ -31,6 +32,7 @@ import { ConfigModule } from '@nestjs/config';
     UnidadesModule,
     DispositivosModule,
     DatosModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],

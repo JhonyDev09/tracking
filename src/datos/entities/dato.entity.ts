@@ -19,7 +19,7 @@ export class Dato {
   combustible: number;
 
   @Column()
-  fechahra: Date;
+  fechahra: string;
 
   @ManyToOne(() => Dispositivo, (dispositivo) => dispositivo.datos)
   dispositivo: Dispositivo;

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'; // Importa el Logger
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Dato } from './entities/dato.entity';
@@ -7,7 +7,7 @@ import { CreateDatoDto } from './dto/create-dato.dto';
 
 @Injectable()
 export class DatosService {
-  private readonly logger = new Logger(DatosService.name); // Crea una instancia de Logger
+  private readonly logger = new Logger(DatosService.name);
 
   constructor(
     @InjectRepository(Dato)
@@ -27,26 +27,22 @@ export class DatosService {
     const dispositivo = await this.dispositivoRepository.findOne({ where: { imei } });
     if (!dispositivo) {
       this.logger.error('Dispositivo no encontrado con IMEI: ' + imei);
-      throw new Error('Dispositivo no encontrado');
+      throw new NotFoundException('Dispositivo no encontrado');
     }
 
-    // Log si el dispositivo es encontrado
-    this.logger.log(`Dispositivo encontrado: ${dispositivo.imei}`);
-
-    // Crear y guardar un nuevo dato relacionado con el dispositivo
-    const nuevoDato = this.datoRepository.create({
+    // Crea un objeto parcial de tipo Dato
+    const nuevoDato: Partial<Dato> = {
       latitud,
       longitud,
       velocidad,
       combustible,
-      fechahra,
+      fechahra: fechahra,
       dispositivo,
-    });
+    };
 
-    // Log antes de guardar el dato
-    this.logger.log(`Guardando nuevo dato: ${JSON.stringify(nuevoDato)}`);
-
-    // Guardar el nuevo dato
-    return await this.datoRepository.save(nuevoDato);
+    // Usa "create" con el tipo "Partial<Dato>" y luego guarda el objeto
+    const datoEntity = this.datoRepository.create(nuevoDato);
+    return await this.datoRepository.save(datoEntity);
   }
 }
+
