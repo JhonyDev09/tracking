@@ -5,7 +5,7 @@ import * as net from 'net';
 @Injectable()
 export class SocketService {
   private readonly logger = new Logger(SocketService.name);
-  private readonly port = 3000;
+  private readonly port = 3001;
 
   constructor(
     private readonly datosService: DatosService,  // Inyecta el servicio de datos
