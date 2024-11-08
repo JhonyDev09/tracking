@@ -1,53 +1,80 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatosService } from '../datos/datos.service';  
+import { DatosService } from '../datos/datos.service';
 import * as net from 'net';
+import * as dgram from 'dgram';
 
 @Injectable()
 export class SocketService {
   private readonly logger = new Logger(SocketService.name);
-  private readonly port = 3001;
+  private readonly tcpPort = 3001;
+  private readonly udpPort = 3002;
 
   constructor(
     private readonly datosService: DatosService,  // Inyecta el servicio de datos
   ) {
     this.createTCPServer();
+    this.createUDPServer();
   }
 
   private createTCPServer() {
     const server = net.createServer(async (socket) => {
-      this.logger.log('Nueva conexión establecida con el GPS');
+      this.logger.log('Nueva conexión TCP establecida con el GPS');
 
       socket.on('data', async (data) => {
         const message = data.toString();
         
         // Log de datos crudos
-        this.logger.log(`Datos recibidos (crudo): ${message}`);
+        this.logger.log(`Datos recibidos por TCP (crudo): ${message}`);
 
         try {
           await this.handleIncomingData(message);
         } catch (error) {
-          this.logger.error(`Error al procesar los datos: ${error.message}`);
+          this.logger.error(`Error al procesar los datos TCP: ${error.message}`);
         }
       });
 
       socket.on('error', (error) => {
-        this.logger.error(`Socket error: ${error.message}`);
+        this.logger.error(`Error en el socket TCP: ${error.message}`);
       });
 
       socket.on('close', () => {
-        this.logger.log('Conexión cerrada');
+        this.logger.log('Conexión TCP cerrada');
       });
     });
 
-    server.listen(this.port, '0.0.0.0', () => {
-      this.logger.log(`Servidor TCP escuchando en el puerto ${this.port}`);
+    server.listen(this.tcpPort, '0.0.0.0', () => {
+      this.logger.log(`Servidor TCP escuchando en el puerto ${this.tcpPort}`);
+    });
+  }
+
+  private createUDPServer() {
+    const udpServer = dgram.createSocket('udp4');
+
+    udpServer.on('message', async (msg, rinfo) => {
+      const message = msg.toString();
+      this.logger.log(`Datos recibidos por UDP (crudo) desde ${rinfo.address}:${rinfo.port}: ${message}`);
+
+      try {
+        await this.handleIncomingData(message);
+      } catch (error) {
+        this.logger.error(`Error al procesar los datos UDP: ${error.message}`);
+      }
+    });
+
+    udpServer.on('error', (error) => {
+      this.logger.error(`Error en el socket UDP: ${error.message}`);
+      udpServer.close();
+    });
+
+    udpServer.bind(this.udpPort, () => {
+      this.logger.log(`Servidor UDP escuchando en el puerto ${this.udpPort}`);
     });
   }
 
   private async handleIncomingData(message: string) {
     const parsedData = this.parseGPSData(message);
 
-    if (!parsedData.imei) {
+    if (!parsedData || !parsedData.imei) {
       this.logger.error('No se pudo extraer el IMEI de los datos recibidos.');
       throw new Error('IMEI no encontrado en los datos recibidos');
     }
@@ -79,7 +106,6 @@ export class SocketService {
     fechahra: string;
   } | null {
     try {
-      // Realizar el split y verificar si todos los campos existen
       const [imei, latitud, longitud, velocidad, combustible, fechahra] = data.split(',');
 
       if (!imei || !latitud || !longitud || !velocidad || !combustible || !fechahra) {
@@ -87,7 +113,6 @@ export class SocketService {
         return null;
       }
 
-      // Retornar los datos parseados en el formato esperado
       return {
         imei,
         latitud,
