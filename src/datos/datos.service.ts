@@ -17,19 +17,21 @@ export class DatosService {
     private readonly dispositivoRepository: Repository<Dispositivo>,
   ) {}
 
+  async findDispositivoByImei(imei: string): Promise<Dispositivo | undefined> {
+    return this.dispositivoRepository.findOne({ where: { imei } });
+  }
+
   async saveData(createDatoDto: CreateDatoDto) {
     const { imei, latitud, longitud, velocidad, combustible, fechahra } = createDatoDto;
 
-    // Log para verificar los datos recibidos
     this.logger.log(`Recibiendo datos: IMEI: ${imei}, Latitud: ${latitud}, Longitud: ${longitud}, Velocidad: ${velocidad}, Combustible: ${combustible}, FechaHora: ${fechahra}`);
 
-    // Buscar dispositivo por IMEI
-    const dispositivo = await this.dispositivoRepository.findOne({ where: { imei } });
+    const dispositivo = await this.findDispositivoByImei(imei);  // Usar el nuevo método
     if (!dispositivo) {
       this.logger.error('Dispositivo no encontrado con IMEI: ' + imei);
       throw new NotFoundException('Dispositivo no encontrado');
     }
-
+    
     // Crea un objeto parcial de tipo Dato
     const nuevoDato: Partial<Dato> = {
       latitud,

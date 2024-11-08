@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DatosService } from '../datos/datos.service';  
 import * as net from 'net';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Dato } from '../datos/entities/dato.entity';
-import { Dispositivo } from '../dispositivos/entities/dispositivo.entity';
 
 @Injectable()
 export class SocketService {
@@ -11,11 +8,7 @@ export class SocketService {
   private readonly port = 3000;
 
   constructor(
-    @InjectRepository(Dato)
-    private readonly datoRepository: Repository<Dato>,
-
-    @InjectRepository(Dispositivo)
-    private readonly dispositivoRepository: Repository<Dispositivo>,
+    private readonly datosService: DatosService,  // Inyecta el servicio de datos
   ) {
     this.createTCPServer();
   }
@@ -52,22 +45,21 @@ export class SocketService {
   private async handleIncomingData(message: string) {
     const parsedData = this.parseGPSData(message);
 
-    const dispositivo = await this.dispositivoRepository.findOne({ where: { imei: parsedData.imei } });
+    const dispositivo = await this.datosService.findDispositivoByImei(parsedData.imei);  // Utiliza el servicio de datos
     if (!dispositivo) {
       this.logger.error('Dispositivo no encontrado con IMEI: ' + parsedData.imei);
       throw new Error('Dispositivo no encontrado');
     }
 
-    const nuevoDato = this.datoRepository.create({
+    const nuevoDato = await this.datosService.saveData({
+      imei: parsedData.imei,
       latitud: parsedData.latitud,
       longitud: parsedData.longitud,
       velocidad: parsedData.velocidad,
       combustible: parsedData.combustible,
       fechahra: parsedData.fechahra,
-      dispositivo,
     });
 
-    await this.datoRepository.save(nuevoDato);
     this.logger.log('Datos guardados correctamente en la base de datos');
   }
 

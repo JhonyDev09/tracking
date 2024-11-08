@@ -9,5 +9,7 @@ import { DatosService } from './datos.service';
   imports: [TypeOrmModule.forFeature([Dato, Dispositivo])],
   controllers: [DatosController],
   providers: [DatosService],
+  exports: [DatosService],
+ 
 })
 export class DatosModule {}
