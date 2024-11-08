@@ -4,6 +4,6 @@ import { DatosModule} from 'src/datos/datos.module';
 
 @Module({
   providers: [SocketService],
-  imports: [DatosModule],
+  imports: [DatosModule, ],
 })
 export class SocketModule {}

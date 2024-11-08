@@ -40,17 +40,21 @@ export class SocketService {
       const fechahra = parts[2] || new Date().toISOString(); // Si no hay fecha, usamos la hora actual
 
       // Extraer la latitud y longitud en grados y minutos
-      const latitudGrados = parts[7].substring(0, 2); // Los primeros dos dígitos para los grados
-      const latitudMinutos = parts[7].substring(2); // Los otros dígitos para los minutos
+      const latitudGrados = parseInt(parts[7].substring(0, 2), 10); // Los primeros dos dígitos para los grados
+      const latitudMinutos = parseFloat(parts[7].substring(2)); // Los otros dígitos para los minutos
       const latitud = parts[8] === 'N' ? 1 : -1; // Ajuste de signo (Norte: positivo, Sur: negativo)
 
-      const longitudGrados = parts[9].substring(0, 3); // Los primeros tres dígitos para los grados
-      const longitudMinutos = parts[9].substring(3); // Los otros dígitos para los minutos
+      const longitudGrados = parseInt(parts[9].substring(0, 3), 10); // Los primeros tres dígitos para los grados
+      const longitudMinutos = parseFloat(parts[9].substring(3)); // Los otros dígitos para los minutos
       const longitud = parts[10] === 'E' ? 1 : -1; // Ajuste de signo (Este: positivo, Oeste: negativo)
 
       // Convertir grados y minutos a formato decimal
-      const latitudDecimal = (parseInt(latitudGrados) + parseFloat(latitudMinutos) / 60) * latitud;
-      const longitudDecimal = (parseInt(longitudGrados) + parseFloat(longitudMinutos) / 60) * longitud;
+      const latitudDecimal = latitudGrados + latitudMinutos / 60;
+      const longitudDecimal = longitudGrados + longitudMinutos / 60;
+
+      // Ajustar el signo de latitud y longitud según el hemisferio
+      const latitudFinal = latitud * latitudDecimal;
+      const longitudFinal = longitud * longitudDecimal;
 
       // Obtener la velocidad en caso de que esté disponible, si no, asignar 0
       const velocidad = parseInt(parts[11], 10) || 0;
@@ -60,8 +64,8 @@ export class SocketService {
 
       return {
         imei,
-        latitud: latitudDecimal.toFixed(6), // Devolver con 6 decimales
-        longitud: longitudDecimal.toFixed(6), // Devolver con 6 decimales
+        latitud: latitudFinal.toFixed(6), // Devolver con 6 decimales
+        longitud: longitudFinal.toFixed(6), // Devolver con 6 decimales
         velocidad,
         combustible,
         fechahra,
