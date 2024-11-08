@@ -1,22 +1,130 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Dato } from 'src/datos/entities/dato.entity';  
-import { Dispositivo } from 'src/dispositivos/entities/dispositivo.entity'; 
+import * as net from 'net';
+import * as dgram from 'dgram';
+import { Dato } from 'src/datos/entities/dato.entity';
+import { Dispositivo } from 'src/dispositivos/entities/dispositivo.entity';
 
 @Injectable()
 export class SocketService {
   private readonly logger = new Logger(SocketService.name);
+  private readonly tcpPort = 3001;
+  private readonly udpPort = 3002;
 
   constructor(
     @InjectRepository(Dato)
-    private readonly datoRepository: Repository<Dato>, // Repositorio de Dato
+    private readonly DatoRepository: Repository<Dato>,  // Repositorio de Dato
     @InjectRepository(Dispositivo)
-    private readonly dispositivoRepository: Repository<Dispositivo> // Repositorio de Dispositivo
-  ) {}
+    private readonly DispositivoRepository: Repository<Dispositivo> // Repositorio de Dispositivo
+  ) {
+    this.createTCPServer();
+    this.createUDPServer();
+  }
 
-  // Función para procesar los datos crudos del GPS
-  private parseGPSData(data: string): {
+  private createTCPServer() {
+    const server = net.createServer(async (socket) => {
+      this.logger.log('Nueva conexión TCP establecida con el GPS');
+
+      socket.on('data', async (data) => {
+        const message = data.toString();
+
+        // Log de datos crudos
+        this.logger.log(`Datos recibidos por TCP (crudo): ${message}`);
+
+        try {
+          await this.handleIncomingData(message);
+        } catch (error) {
+          this.logger.error(`Error al procesar los datos TCP: ${error.message}`);
+        }
+      });
+
+      socket.on('error', (error) => {
+        this.logger.error(`Error en el socket TCP: ${error.message}`);
+      });
+
+      socket.on('close', () => {
+        this.logger.log('Conexión TCP cerrada');
+      });
+    });
+
+    server.listen(this.tcpPort, '0.0.0.0', () => {
+      this.logger.log(`Servidor TCP escuchando en el puerto ${this.tcpPort}`);
+    });
+  }
+
+  private createUDPServer() {
+    const udpServer = dgram.createSocket('udp4');
+
+    udpServer.on('message', async (msg, rinfo) => {
+      const message = msg.toString();
+      this.logger.log(`Datos recibidos por UDP (crudo) desde ${rinfo.address}:${rinfo.port}: ${message}`);
+
+      try {
+        await this.handleIncomingData(message);
+      } catch (error) {
+        this.logger.error(`Error al procesar los datos UDP: ${error.message}`);
+      }
+    });
+
+    udpServer.on('error', (error) => {
+      this.logger.error(`Error en el socket UDP: ${error.message}`);
+      udpServer.close();
+    });
+
+    udpServer.bind(this.udpPort, () => {
+      this.logger.log(`Servidor UDP escuchando en el puerto ${this.udpPort}`);
+    });
+  }
+
+  private async handleIncomingData(message: string) {
+    const parsedData = this.parseDato(message);
+
+    if (!parsedData || !parsedData.imei) {
+      this.logger.error('No se pudo extraer el IMEI de los datos recibidos.');
+      throw new Error('IMEI no encontrado en los datos recibidos');
+    }
+
+    // Log de los datos procesados antes de guardarlos
+    this.logger.log('Datos procesados:', parsedData);
+
+    // Guardar en la base de datos usando TypeORM
+    await this.saveDato(parsedData);
+  }
+
+  private async saveDato(data: {
+    imei: string;
+    latitud: string;
+    longitud: string;
+    velocidad: number;
+    combustible: number;
+    fechahra: string;
+  }) {
+    // Buscar el dispositivo por IMEI
+    const dispositivo = await this.DispositivoRepository.findOne({
+      where: { imei: data.imei },
+    });
+
+    if (!dispositivo) {
+      this.logger.error(`No se encontró un dispositivo con el IMEI ${data.imei}`);
+      throw new Error('Dispositivo no encontrado');
+    }
+
+    // Crear y asignar los datos
+    const nuevoDato = new Dato();
+    nuevoDato.latitud = data.latitud;
+    nuevoDato.longitud = data.longitud;
+    nuevoDato.velocidad = data.velocidad;
+    nuevoDato.combustible = data.combustible;
+    nuevoDato.fechahra = data.fechahra;
+    nuevoDato.dispositivo = dispositivo; // Asignar el dispositivo encontrado
+
+    await this.DatoRepository.save(nuevoDato);
+
+    this.logger.log('Datos guardados en la base de datos con relación al dispositivo.');
+  }
+
+  private parseDato(data: string): {
     imei: string;
     latitud: string;
     longitud: string;
@@ -27,45 +135,35 @@ export class SocketService {
     try {
       const parts = data.split(',');
 
-      // Verificar que la estructura mínima esté presente y el mensaje comience con "imei:"
-      if (!parts[0].startsWith('imei:') || parts.length < 12) {
+      if (!parts[0].startsWith('imei:') || parts.length < 15) {
         this.logger.error('Formato de datos recibido incompleto o incorrecto.');
         return null;
       }
 
-      // Extraer el IMEI eliminando el prefijo "imei:"
+      // Extraer el IMEI
       const imei = parts[0].replace('imei:', '').trim();
+      const fechahra = parts[2] || new Date().toISOString(); // Si no hay fecha, usar la hora actual
 
-      // Extraer la fecha y hora del mensaje, si no está presente, usar la hora actual
-      const fechahra = parts[2] || new Date().toISOString(); // Si no hay fecha, usamos la hora actual
+      // Extraer latitud y longitud en formato DMM (Grados y minutos)
+      const latitudGrados = parts[7].substring(0, 2);  // Primeros 2 caracteres son grados de latitud
+      const latitudMinutos = parts[7].substring(2);   // Los restantes son los minutos de latitud
+      const latitudDireccion = parts[8];              // Dirección de latitud (N o S)
 
-      // Extraer la latitud y longitud en grados y minutos
-      const latitudGrados = parseInt(parts[7].substring(0, 2), 10); // Los primeros dos dígitos para los grados
-      const latitudMinutos = parseFloat(parts[7].substring(2)); // Los otros dígitos para los minutos
-      const latitud = parts[8] === 'N' ? 1 : -1; // Ajuste de signo (Norte: positivo, Sur: negativo)
-
-      const longitudGrados = parseInt(parts[9].substring(0, 3), 10); // Los primeros tres dígitos para los grados
-      const longitudMinutos = parseFloat(parts[9].substring(3)); // Los otros dígitos para los minutos
-      const longitud = parts[10] === 'E' ? 1 : -1; // Ajuste de signo (Este: positivo, Oeste: negativo)
+      const longitudGrados = parts[9].substring(0, 3); // Primeros 3 caracteres son grados de longitud
+      const longitudMinutos = parts[9].substring(3);  // Los restantes son los minutos de longitud
+      const longitudDireccion = parts[10];            // Dirección de longitud (E o W)
 
       // Convertir grados y minutos a formato decimal
-      const latitudDecimal = latitudGrados + latitudMinutos / 60;
-      const longitudDecimal = longitudGrados + longitudMinutos / 60;
+      const latitudDecimal = this.convertToDecimal(latitudGrados, latitudMinutos, latitudDireccion);
+      const longitudDecimal = this.convertToDecimal(longitudGrados, longitudMinutos, longitudDireccion);
 
-      // Ajustar el signo de latitud y longitud según el hemisferio
-      const latitudFinal = latitud * latitudDecimal;
-      const longitudFinal = longitud * longitudDecimal;
-
-      // Obtener la velocidad en caso de que esté disponible, si no, asignar 0
-      const velocidad = parseInt(parts[11], 10) || 0;
-
-      // Extraer el nivel de combustible (aceite) en porcentaje
-      const combustible = parseFloat(parts[14].replace('%', ''));
+      const velocidad = parseFloat(parts[11]) || 0; // Velocidad en km/h
+      const combustible = parseFloat(parts[14].replace('%', '')) || 0; // Nivel de combustible
 
       return {
         imei,
-        latitud: latitudFinal.toFixed(6), // Devolver con 6 decimales
-        longitud: longitudFinal.toFixed(6), // Devolver con 6 decimales
+        latitud: latitudDecimal.toFixed(6),
+        longitud: longitudDecimal.toFixed(6),
         velocidad,
         combustible,
         fechahra,
@@ -76,35 +174,17 @@ export class SocketService {
     }
   }
 
-  // Función para guardar los datos procesados en la base de datos usando TypeORM
-  async saveGPSData(data: string, dispositivoId: number): Promise<Dato | null> {
-    const processedData = this.parseGPSData(data);
+  // Función auxiliar para convertir grados y minutos a decimal
+  private convertToDecimal(grados: string, minutos: string, direccion: string): number {
+    const gradosNum = parseInt(grados, 10);
+    const minutosNum = parseFloat(minutos) / 60;
+    let decimal = gradosNum + minutosNum;
 
-    if (!processedData) {
-      this.logger.error('No se pudo procesar los datos del GPS.');
-      return null;
+    // Si la dirección es Sur o Oeste, hacer la coordenada negativa
+    if (direccion === 'S' || direccion === 'W') {
+      decimal = -decimal;
     }
 
-    const { latitud, longitud, fechahra, velocidad, combustible } = processedData;
-
-    try {
-      // Crear la instancia de Dato
-      const newDato = this.datoRepository.create({
-        latitud,
-        longitud,
-        fechahra,
-        velocidad,
-        combustible,
-        dispositivoId,
-      });
-
-      // Guardar los datos en la base de datos
-      const savedDato = await this.datoRepository.save(newDato);
-      this.logger.log(`Datos guardados correctamente para el dispositivo ${dispositivoId}: ${savedDato}`);
-      return savedDato;
-    } catch (error) {
-      this.logger.error(`Error al guardar los datos en la base de datos: ${error.message}`);
-      return null;
-    }
+    return decimal;
   }
 }
