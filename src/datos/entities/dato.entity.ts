@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Dispositivo } from 'src/dispositivos/entities/dispositivo.entity';
 
 @Entity()
@@ -6,11 +6,14 @@ export class Dato {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   latitud: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   longitud: string;
+
+  @Column()
+  fechahra: string;
 
   @Column()
   velocidad: number;
@@ -18,9 +21,9 @@ export class Dato {
   @Column()
   combustible: number;
 
-  @Column()
-  fechahra: string;
-
-  @ManyToOne(() => Dispositivo, (dispositivo) => dispositivo.datos)
+  @ManyToOne(() => Dispositivo, dispositivo => dispositivo.datos)
   dispositivo: Dispositivo;
+
+  @JoinColumn({ name: 'dispositivoId' })
+  dispositivoId: number;  
 }
