@@ -79,6 +79,9 @@ export class SocketService {
       throw new Error('IMEI no encontrado en los datos recibidos');
     }
 
+    // Log de los datos procesados antes de guardarlos
+    this.logger.log('Datos procesados:', parsedData);
+
     const dispositivo = await this.datosService.findDispositivoByImei(parsedData.imei);
     if (!dispositivo) {
       this.logger.error('Dispositivo no encontrado con IMEI: ' + parsedData.imei);
@@ -106,24 +109,48 @@ export class SocketService {
     fechahra: string;
   } | null {
     try {
-      const [imei, latitud, longitud, velocidad, combustible, fechahra] = data.split(',');
+      const parts = data.split(',');
 
-      if (!imei || !latitud || !longitud || !velocidad || !combustible || !fechahra) {
+      // Verificar que la estructura mínima esté presente y el mensaje comience con "imei:"
+      if (!parts[0].startsWith('imei:') || parts.length < 12) {
         this.logger.error('Formato de datos recibido incompleto o incorrecto.');
         return null;
       }
+
+      // Extraer el IMEI eliminando el prefijo "imei:"
+      const imei = parts[0].replace('imei:', '').trim();
+
+      // Extraer la fecha y hora del mensaje
+      const fechahra = parts[2];
+
+      // Extraer la latitud y longitud en grados decimales
+      const latitud = parts[7] === 'S' ? `-${this.convertToDecimal(parts[5])}` : this.convertToDecimal(parts[5]);
+      const longitud = parts[9] === 'W' ? `-${this.convertToDecimal(parts[7])}` : this.convertToDecimal(parts[7]);
+
+      // Obtener la velocidad en caso de que esté disponible, si no, asignar 0
+      const velocidad = parseInt(parts[11], 10) || 0;
+
+      // Extraer el nivel de combustible (aceite) en porcentaje
+      const combustible = parseFloat(parts[14].replace('%', ''));
 
       return {
         imei,
         latitud,
         longitud,
-        velocidad: parseInt(velocidad, 10),
-        combustible: parseInt(combustible, 10),
+        velocidad,
+        combustible,
         fechahra,
       };
     } catch (error) {
       this.logger.error(`Error al parsear los datos GPS: ${error.message}`);
       return null;
     }
+  }
+
+  // Función auxiliar para convertir grados minutos a decimal
+  private convertToDecimal(coord: string): string {
+    const degrees = parseInt(coord.substring(0, 2), 10);
+    const minutes = parseFloat(coord.substring(2));
+    return (degrees + minutes / 60).toFixed(6);
   }
 }
