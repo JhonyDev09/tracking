@@ -142,7 +142,7 @@ export class SocketService {
 
       // Extraer el IMEI
       const imei = parts[0].replace('imei:', '').trim();
-      const fechahra = this.convertToFechaHora(parts[2], parts[5]); // Combinar fecha y hora recibidas
+      const fechahra = this.convertToFechaHora(parts[2]); // Combinar fecha y hora recibidas
 
 
       // Extraer latitud y longitud en formato DMM (Grados y minutos)
@@ -175,19 +175,19 @@ export class SocketService {
     }
   }
 
-  private convertToFechaHora(fecha: string, hora: string): Date {
-    // fecha en formato ddMMyy y hora en formato hhmmss
-    const day = parseInt(fecha.substring(4, 6), 10);
-    const month = parseInt(fecha.substring(2, 4), 10) - 1; // Mes en JavaScript es 0-indexado
-    const year = 2000 + parseInt(fecha.substring(0, 2), 10); // Ajuste de año (20xx)
-  
-    const hours = parseInt(hora.substring(0, 2), 10);
-    const minutes = parseInt(hora.substring(2, 4), 10);
-    const seconds = parseInt(hora.substring(4, 6), 10);
-  
+  private convertToFechaHora(fechaHora: string): Date {
+    // FechaHora en formato añomesdiahoraminutossegundos (ddMMyyhhmmss)
+    const year = 2000 + parseInt(fechaHora.substring(0, 2), 10); // Ajuste de año (20xx)
+    const month = parseInt(fechaHora.substring(2, 4), 10) - 1; // Mes en JavaScript es 0-indexado
+    const day = parseInt(fechaHora.substring(4, 6), 10);
+    const hours = parseInt(fechaHora.substring(6, 8), 10);
+    const minutes = parseInt(fechaHora.substring(8, 10), 10);
+    const seconds = parseInt(fechaHora.substring(10, 12), 10);
+
     // Crear la fecha en UTC directamente
     return new Date(Date.UTC(year, month, day, hours, minutes, seconds));
-  }
+}
+
   
 
   // Función auxiliar para convertir grados y minutos a decimal
