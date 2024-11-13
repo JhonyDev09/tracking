@@ -179,14 +179,16 @@ export class SocketService {
     // fecha en formato ddMMyy y hora en formato hhmmss
     const day = parseInt(fecha.substring(0, 2), 10);
     const month = parseInt(fecha.substring(2, 4), 10) - 1; // Mes en JavaScript es 0-indexado
-    const year = 2000 + parseInt(fecha.substring(4, 6), 10); // Ajuste de año
+    const year = 2000 + parseInt(fecha.substring(4, 6), 10); // Ajuste de año (20xx)
   
     const hours = parseInt(hora.substring(0, 2), 10);
     const minutes = parseInt(hora.substring(2, 4), 10);
     const seconds = parseInt(hora.substring(4, 6), 10);
   
-    return new Date(year, month, day, hours, minutes, seconds);
+    // Crear la fecha en UTC directamente
+    return new Date(Date.UTC(year, month, day, hours, minutes, seconds));
   }
+  
 
   // Función auxiliar para convertir grados y minutos a decimal
   private convertToDecimal(grados: string, minutos: string, direccion: string): number {

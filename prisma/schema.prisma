@@ -98,14 +98,14 @@ model Dato {
   id Int @default(autoincrement()) @id
   latitud String @db.VarChar(100)
   longitud String @db.VarChar(100)
-  fechahra String
+  fechahra DateTime
   velocidad Int
   aceite Float
   dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
   dispositivoId Int
 }
 
-model Comando {
+model Comando {S
   id Int @default(autoincrement()) @id
   nombre String
   comando String
