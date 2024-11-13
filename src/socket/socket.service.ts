@@ -181,7 +181,7 @@ export class SocketService {
     const month = parseInt(fecha.substring(2, 4), 10) - 1; // Mes en JavaScript es 0-indexado
     const year = 2000 + parseInt(fecha.substring(0, 2), 10); // Ajuste de año (20xx)
   
-    const hours = parseInt(hora.substring(1, 3), 10);
+    const hours = parseInt(hora.substring(0, 2), 10);
     const minutes = parseInt(hora.substring(2, 4), 10);
     const seconds = parseInt(hora.substring(4, 6), 10);
   
