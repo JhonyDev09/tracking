@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
+model Empleado {
   id Int @default(autoincrement()) @id
   nombre String @db.VarChar(100)
   apellidos String @db.VarChar(100)
@@ -24,6 +24,10 @@ model Usuario {
   rol Rol
   vehiculo Vehiculo[]
 }
+
+//Crear modelo de Usuarios para app movil
+
+
 
 model Dispositivo {
   id Int @default(autoincrement()) @id
@@ -83,7 +87,7 @@ model Vehiculo {
   tipoId Int
   dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
   dispositivoId Int
-  chofer Usuario @relation(fields: [usuarioId], references: [id])
+  chofer Empleado @relation(fields: [usuarioId], references: [id])
   usuarioId Int
   estatus Status @relation(fields: [estatusId], references: [id])
   estatusId Int
@@ -96,7 +100,7 @@ model Dato {
   longitud String @db.VarChar(100)
   fechahra String
   velocidad Int
-  combustible Float
+  aceite Float
   dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
   dispositivoId Int
 }

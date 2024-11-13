@@ -13,7 +13,7 @@ export class Dato {
   longitud: string;
 
   @Column()
-  fechahra: string;
+  fechahra: Date;
 
   @Column()
   velocidad: number;

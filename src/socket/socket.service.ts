@@ -98,7 +98,7 @@ export class SocketService {
     longitud: string;
     velocidad: number;
     combustible: number;
-    fechahra: string;
+    fechahra: Date;
   }) {
     // Buscar el dispositivo por IMEI
     const dispositivo = await this.DispositivoRepository.findOne({
@@ -130,7 +130,7 @@ export class SocketService {
     longitud: string;
     velocidad: number;
     combustible: number;
-    fechahra: string;
+    fechahra: Date;
   } | null {
     try {
       const parts = data.split(',');
@@ -142,7 +142,8 @@ export class SocketService {
 
       // Extraer el IMEI
       const imei = parts[0].replace('imei:', '').trim();
-      const fechahra = parts[2] || new Date().toISOString(); // Si no hay fecha, usar la hora actual
+      const fechahra = this.convertToFechaHora(parts[2], parts[5]); // Combinar fecha y hora recibidas
+
 
       // Extraer latitud y longitud en formato DMM (Grados y minutos)
       const latitudGrados = parts[7].substring(0, 2);  // Primeros 2 caracteres son grados de latitud
@@ -172,6 +173,19 @@ export class SocketService {
       this.logger.error(`Error al parsear los datos GPS: ${error.message}`);
       return null;
     }
+  }
+
+  private convertToFechaHora(fecha: string, hora: string): Date {
+    // fecha en formato ddMMyy y hora en formato hhmmss
+    const day = parseInt(fecha.substring(0, 2), 10);
+    const month = parseInt(fecha.substring(2, 4), 10) - 1; // Mes en JavaScript es 0-indexado
+    const year = 2000 + parseInt(fecha.substring(4, 6), 10); // Ajuste de año
+  
+    const hours = parseInt(hora.substring(0, 2), 10);
+    const minutes = parseInt(hora.substring(2, 4), 10);
+    const seconds = parseInt(hora.substring(4, 6), 10);
+  
+    return new Date(year, month, day, hours, minutes, seconds);
   }
 
   // Función auxiliar para convertir grados y minutos a decimal
