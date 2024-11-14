@@ -16,18 +16,21 @@ export class DatosService {
   }
 
   async obtenerUltimoDato(): Promise<Dato> {
-    const ultimoDato = await this.datoRepository.findOne({
+    const ultimoDato = await this.datoRepository.find({
       order: {
-        fechahra: 'DESC',  // Asegúrate de que esta propiedad esté bien definida en tu entidad
+        fechahra: 'DESC',  // Ordena de manera descendente por la fecha
       },
+      take: 1,  // Solo toma el primer elemento después de ordenarlo
     });
   
-    if (!ultimoDato) {
+    if (!ultimoDato || ultimoDato.length === 0) {
       console.error('No se encontró el último dato.');
+      return null;
     }
   
-    return ultimoDato;
+    return ultimoDato[0];  // El primer elemento será el último
   }
+  
 
 }
 
