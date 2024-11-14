@@ -23,10 +23,10 @@ import { EmpleadoModule } from './empleado/empleado.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',//'database-1.ctwks8qa0png.us-east-2.rds.amazonaws.com',
+      host: 'database-1.ctwks8qa0png.us-east-2.rds.amazonaws.com',
       port: 3306,
-      username: 'root',
-      password: '',
+      username: 'admin',
+      password: 'olivarsoto09',
       database: 'tracking',
       entities: [Dispositivo, Dato, DispUnidad, Unidade, UsrUnidad, Empleado],
       synchronize: false,
