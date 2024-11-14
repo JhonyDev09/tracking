@@ -17,7 +17,7 @@ model Empleado {
   id Int @default(autoincrement()) @id
   nombre String @db.VarChar(100)
   apellidos String @db.VarChar(100)
-  numTel Int
+  numTel String @db.VarChar(20)
   email String @unique @db.VarChar(100)
   nombreUsuario String @unique @db.VarChar(50)
   contrasena String @db.VarChar(50)
@@ -44,7 +44,7 @@ model Dispositivo {
 model Marca {
   id Int @default(autoincrement()) @id
   marca String @db.VarChar(50)
-  unidaes Unidad[]
+  unidades Unidad[]
 }
 
 model Modelo {
@@ -57,19 +57,19 @@ model Color {
   id Int @default(autoincrement()) @id
   color String @db.VarChar(50)
   hexadecimal String @db.VarChar(20)
-  unidaes Unidad[]
+  unidades Unidad[]
 }
 
 model Tipo {
   id Int @default(autoincrement()) @id
   tipo String @db.VarChar(50)
-  unidaes Unidad[]
+  unidades Unidad[]
 }
 
 model Status {
   id Int @default(autoincrement()) @id
   estatus String @db.VarChar(50)
-  unidaes Unidad[]
+  unidades Unidad[]
 }
 
 model Unidad {

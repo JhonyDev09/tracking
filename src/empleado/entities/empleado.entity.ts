@@ -2,28 +2,28 @@ import { UsrUnidad } from "src/usr-unidad/entities/usr-unidad.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn,  } from "typeorm";
 
 
-@Entity()
-export class Usuario {
+@Entity('empleado')
+export class Empleado {
     @PrimaryGeneratedColumn()
     id: number;
     
     @Column()
-    nombre: String;
+    nombre: string;
 
     @Column()
-    apellidos: String;
+    apellidos: string;
 
     @Column()
-    numTel: String;
+    numTel: string;
 
     @Column()
-    nombreUser: String;
+    nombreUser: string;
 
     @Column()
-    contrasena: String;
+    contrasena: string;
 
     @Column()
-    correo: String;
+    correo: string;
 
     @Column()
     rol: Rol;
@@ -37,5 +37,3 @@ export enum Rol {
     CHOFER = 'CHOFER',
     MONITORISTA = 'MONITORISTA'
 }
-
-
