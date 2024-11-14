@@ -5,6 +5,7 @@ import * as net from 'net';
 import * as dgram from 'dgram';
 import { Dato } from 'src/datos/entities/dato.entity';
 import { Dispositivo } from 'src/dispositivos/entities/dispositivo.entity';
+import { UbicacionesGateway } from 'src/ubicaciones/ubicaciones.gateway';
 
 @Injectable()
 export class SocketService {
@@ -16,7 +17,8 @@ export class SocketService {
     @InjectRepository(Dato)
     private readonly DatoRepository: Repository<Dato>,  // Repositorio de Dato
     @InjectRepository(Dispositivo)
-    private readonly DispositivoRepository: Repository<Dispositivo> // Repositorio de Dispositivo
+    private readonly DispositivoRepository: Repository<Dispositivo>, // Repositorio de Dispositivo
+    private readonly ubicacionesGateway: UbicacionesGateway 
   ) {
     this.createTCPServer();
     this.createUDPServer();
@@ -120,6 +122,9 @@ export class SocketService {
     nuevoDato.dispositivo = dispositivo; // Asignar el dispositivo encontrado
 
     await this.DatoRepository.save(nuevoDato);
+    this.ubicacionesGateway.enviarUltimoDato();
+
+
 
     this.logger.log('Datos guardados en la base de datos con relación al dispositivo.');
   }

@@ -14,6 +14,21 @@ export class DatosService {
     const nuevoDato = this.datoRepository.create(dato);
     return await this.datoRepository.save(nuevoDato);
   }
+
+  async obtenerUltimoDato(): Promise<Dato> {
+    const ultimoDato = await this.datoRepository.findOne({
+      order: {
+        fechahra: 'DESC',  // Asegúrate de que esta propiedad esté bien definida en tu entidad
+      },
+    });
+  
+    if (!ultimoDato) {
+      console.error('No se encontró el último dato.');
+    }
+  
+    return ultimoDato;
+  }
+
 }
 
 

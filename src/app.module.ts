@@ -10,6 +10,7 @@ import { Dispositivo } from './dispositivos/entities/dispositivo.entity';
 import { Dato } from './datos/entities/dato.entity';
 import { ConfigModule } from '@nestjs/config';
 import { SocketModule } from './socket/socket.module';
+import { UbicacionesGateway } from './ubicaciones/ubicaciones.gateway';
 
 
 @Module({
@@ -35,6 +36,6 @@ import { SocketModule } from './socket/socket.module';
     SocketModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UbicacionesGateway],
 })
 export class AppModule {}
