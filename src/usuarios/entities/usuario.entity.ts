@@ -1,3 +1,4 @@
+import { UsrUnidad } from "src/usr-unidad/entities/usr-unidad.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn,  } from "typeorm";
 
 
@@ -27,8 +28,8 @@ export class Usuario {
     @Column()
     rol: Rol;
 
-    //@OneToMany(() => Unidades, (unidad)=>unidad.chofer)
-    //unidades: Unidad[];
+    @OneToMany(() => UsrUnidad, (usrUnidad) => usrUnidad.chofer)
+    usrUnidad: UsrUnidad[];
 }
 
 export enum Rol {
