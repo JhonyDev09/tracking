@@ -18,6 +18,6 @@ export class Unidade {
     dispunidad: DispUnidad[];
 
     @OneToMany(() => UsrUnidad, (usrUnidad) => usrUnidad.unidad)
-    usrUnidad: UsrUnidad[];
+    usrunidad: UsrUnidad[];
 
 }

@@ -7,10 +7,10 @@ export class UsrUnidad {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Unidade, (unidad) => unidad.usrUnidad)
+  @ManyToOne(() => Unidade, (unidad) => unidad.usrunidad)
   unidad: Unidade;
 
-  @ManyToOne(() => Empleado, (empleado) => empleado.usrUnidad)
+  @ManyToOne(() => Empleado, (empleado) => empleado.usrunidad)
   chofer: Empleado;
 
   

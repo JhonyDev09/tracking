@@ -29,7 +29,7 @@ export class Empleado {
     rol: Rol;
 
     @OneToMany(() => UsrUnidad, (usrUnidad) => usrUnidad.chofer)
-    usrUnidad: UsrUnidad[];
+    usrunidad: UsrUnidad[];
 }
 
 export enum Rol {
