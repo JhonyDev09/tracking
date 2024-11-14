@@ -99,7 +99,7 @@ export class SocketService {
     latitud: string;
     longitud: string;
     velocidad: number;
-    combustible: number;
+    aceite: number;
     fechahra: Date;
   }) {
     // Buscar el dispositivo por IMEI
@@ -117,7 +117,7 @@ export class SocketService {
     nuevoDato.latitud = data.latitud;
     nuevoDato.longitud = data.longitud;
     nuevoDato.velocidad = data.velocidad;
-    nuevoDato.combustible = data.combustible;
+    nuevoDato.aceite = data.aceite;
     nuevoDato.fechahra = data.fechahra;
     nuevoDato.dispositivo = dispositivo; // Asignar el dispositivo encontrado
 
@@ -134,7 +134,7 @@ export class SocketService {
     latitud: string;
     longitud: string;
     velocidad: number;
-    combustible: number;
+    aceite: number;
     fechahra: Date;
   } | null {
     try {
@@ -164,14 +164,14 @@ export class SocketService {
       const longitudDecimal = this.convertToDecimal(longitudGrados, longitudMinutos, longitudDireccion);
 
       const velocidad = parseFloat(parts[11]) || 0; // Velocidad en km/h
-      const combustible = parseFloat(parts[14].replace('%', '')) || 0; // Nivel de combustible
+      const aceite = parseFloat(parts[14].replace('%', '')) || 0; // Nivel de combustible
 
       return {
         imei,
         latitud: latitudDecimal.toFixed(6),
         longitud: longitudDecimal.toFixed(6),
         velocidad,
-        combustible,
+        aceite,
         fechahra,
       };
     } catch (error) {

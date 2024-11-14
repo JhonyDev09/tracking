@@ -19,7 +19,7 @@ export class Dato {
   velocidad: number;
 
   @Column()
-  combustible: number;
+  aceite: number;
 
   @ManyToOne(() => Dispositivo, dispositivo => dispositivo.datos)
   dispositivo: Dispositivo;
