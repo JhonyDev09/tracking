@@ -30,9 +30,9 @@ export class DatosService {
         'd.fechahra AS fechahra',
       ])
       .innerJoin('d.dispositivo', 'disp')
-      .innerJoin('disp.dispUnidad', 'du')
+      .innerJoin('disp.dispunidad', 'du')
       .innerJoin('du.unidad', 'u')
-      .innerJoin('u.usrUnidad', 'uu')
+      .innerJoin('u.usrunidad', 'uu')
       .innerJoin('uu.chofer', 'e') // Cambiado de 'empleado' a 'chofer'
       .orderBy('d.fechahra', 'DESC')
       .limit(1)
