@@ -33,7 +33,7 @@ export class DatosService {
       .innerJoin('disp.dispUnidad', 'du')
       .innerJoin('du.unidad', 'u')
       .innerJoin('u.usrUnidad', 'uu')
-      .innerJoin('uu.empleado', 'e')
+      .innerJoin('uu.chofer', 'e') // Cambiado de 'empleado' a 'chofer'
       .orderBy('d.fechahra', 'DESC')
       .limit(1)
       .getRawOne();
@@ -45,7 +45,7 @@ export class DatosService {
 
     return ultimoDato;
   }
-  
+
 
 }
 
