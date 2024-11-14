@@ -7,10 +7,10 @@ export class DispUnidad {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Dispositivo, (dispositivo) => dispositivo.dispUnidad)
+  @ManyToOne(() => Dispositivo, (dispositivo) => dispositivo.dispunidad)
   dispositivo: Dispositivo;
 
-  @ManyToOne(() => Unidade, (unidad) => unidad.dispUnidad)
+  @ManyToOne(() => Unidade, (unidad) => unidad.dispunidad)
   unidad: Unidade;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

@@ -25,8 +25,8 @@ export class Dispositivo {
 
     @OneToMany (()=> Dato, (dato) => dato.dispositivo)
     datos: Dato[]
-    
+
     @OneToMany(() => DispUnidad, (dispUnidad) => dispUnidad.dispositivo)
-    dispUnidad: DispUnidad[];
+    dispunidad: DispUnidad[];
 
 }
