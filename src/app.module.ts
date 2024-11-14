@@ -11,8 +11,6 @@ import { Dato } from './datos/entities/dato.entity';
 import { ConfigModule } from '@nestjs/config';
 import { SocketModule } from './socket/socket.module';
 import { UbicacionesGateway } from './ubicaciones/ubicaciones.gateway';
-import { AsigUnidadModule } from './asig-unidad/asig-unidad.module';
-import { AsigDispModule } from './asig-disp/asig-disp.module';
 import { DispUnidadModule } from './disp-unidad/disp-unidad.module';
 import { UsrUnidadModule } from './usr-unidad/usr-unidad.module';
 
@@ -38,8 +36,6 @@ import { UsrUnidadModule } from './usr-unidad/usr-unidad.module';
     DispositivosModule,
     DatosModule,
     SocketModule,
-    AsigUnidadModule,
-    AsigDispModule,
     DispUnidadModule,
     UsrUnidadModule,
   ],
