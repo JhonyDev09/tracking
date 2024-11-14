@@ -15,20 +15,35 @@ export class DatosService {
     return await this.datoRepository.save(nuevoDato);
   }
 
-  async obtenerUltimoDato(): Promise<Dato> {
-    const ultimoDato = await this.datoRepository.find({
-      order: {
-        fechahra: 'DESC',  // Ordena de manera descendente por la fecha
-      },
-      take: 1,  // Solo toma el primer elemento después de ordenarlo
-    });
-  
-    if (!ultimoDato || ultimoDato.length === 0) {
+  async obtenerUltimoDato(): Promise<any> {
+    const ultimoDato = await this.datoRepository
+      .createQueryBuilder('d')
+      .select([
+        'disp.imei AS imei',
+        'd.latitud AS latitud',
+        'd.longitud AS longitud',
+        'u.placas AS placas',
+        'u.numSerie AS numSerie',
+        'e.nombre AS nombre',
+        'e.apellidos AS apellidos',
+        'e.numTel AS numTel',
+        'd.fechahra AS fechahra',
+      ])
+      .innerJoin('d.dispositivo', 'disp')
+      .innerJoin('disp.dispUnidad', 'du')
+      .innerJoin('du.unidad', 'u')
+      .innerJoin('u.usrUnidad', 'uu')
+      .innerJoin('uu.empleado', 'e')
+      .orderBy('d.fechahra', 'DESC')
+      .limit(1)
+      .getRawOne();
+
+    if (!ultimoDato) {
       console.error('No se encontró el último dato.');
       return null;
     }
-  
-    return ultimoDato[0];  // El primer elemento será el último
+
+    return ultimoDato;
   }
   
 

@@ -22,7 +22,7 @@ model Empleado {
   nombreUsuario String @unique @db.VarChar(50)
   contrasena String @db.VarChar(50)
   rol Rol
-  vehiculo Vehiculo[]
+  unidad usrUnidad[]
 }
 
 //Crear modelo de Usuarios para app movil
@@ -35,7 +35,7 @@ model Dispositivo {
   imei String @db.VarChar(50)
   numTel String @db.VarChar(20)
   icc String @db.VarChar(25)
-  vehiculos Vehiculo[]
+  unidades dispUnidad[]
   Datos Dato[]
   comandos Comando[]
 }
@@ -44,35 +44,35 @@ model Dispositivo {
 model Marca {
   id Int @default(autoincrement()) @id
   marca String @db.VarChar(50)
-  vehiculos Vehiculo[]
+  unidaes Unidad[]
 }
 
 model Modelo {
   id Int @default(autoincrement()) @id
   modelo String @db.VarChar(50)
-  vehiculos Vehiculo[]
+  unidaes Unidad[]
 }
 
 model Color {
   id Int @default(autoincrement()) @id
   color String @db.VarChar(50)
   hexadecimal String @db.VarChar(20)
-  vehiculos Vehiculo[]
+  unidaes Unidad[]
 }
 
 model Tipo {
   id Int @default(autoincrement()) @id
   tipo String @db.VarChar(50)
-  vehiculos Vehiculo[]
+  unidaes Unidad[]
 }
 
 model Status {
   id Int @default(autoincrement()) @id
   estatus String @db.VarChar(50)
-  vehiculos Vehiculo[]
+  unidaes Unidad[]
 }
 
-model Vehiculo {
+model Unidad {
   id Int @default(autoincrement()) @id
   numSerie String @db.VarChar(100)
   marca Marca @relation(fields: [marcaId], references: [id])
@@ -85,13 +85,11 @@ model Vehiculo {
   placas String @db.VarChar(20)
   tipo Tipo @relation(fields: [tipoId], references: [id])
   tipoId Int
-  dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
-  dispositivoId Int
-  chofer Empleado @relation(fields: [usuarioId], references: [id])
-  usuarioId Int
   estatus Status @relation(fields: [estatusId], references: [id])
   estatusId Int
   descripcion String @db.Text
+  dispositivo dispUnidad[]
+  chofer usrUnidad[]
 }
 
 model Dato {
@@ -105,7 +103,7 @@ model Dato {
   dispositivoId Int
 }
 
-model Comando {S
+model Comando {
   id Int @default(autoincrement()) @id
   nombre String
   comando String
@@ -113,6 +111,26 @@ model Comando {S
   dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
   dispositivoId Int
 }
+
+model dispUnidad{
+  id Int @default(autoincrement()) @id
+  dispositivo Dispositivo @relation(fields: [dispositivoId], references: [id])
+  dispositivoId Int
+  unidad Unidad @relation(fields: [unidadId], references: [id])
+  unidadId Int
+  fechaAsig DateTime
+}
+
+model usrUnidad{
+  id Int @default(autoincrement()) @id
+  chofer Empleado @relation(fields: [choferId], references: [id])
+  choferId Int
+  unidad Unidad @relation(fields: [unidadId], references: [id])
+  unidadId Int
+  fechaAsig DateTime
+}
+
+
 
 enum Rol {
   ADMIN
