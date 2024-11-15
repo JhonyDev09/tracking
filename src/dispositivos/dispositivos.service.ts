@@ -17,4 +17,8 @@ export class DispositivosService {
     return await this.dispositivosRepository.save(dispositivo);
   }
 
+  async findAll(): Promise<Dispositivo[]>{
+    return this.dispositivosRepository.find();
+  }
+
 }

@@ -28,6 +28,7 @@ export class DatosService {
         'e.apellidos AS apellidos',
         'e.numTel AS numTel',
         'd.fechahra AS fechahra',
+        'd.id AS id_dispositivo'
       ])
       .innerJoin('d.dispositivo', 'disp')
       .innerJoin('disp.dispunidad', 'du')

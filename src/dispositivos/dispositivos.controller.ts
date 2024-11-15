@@ -6,10 +6,16 @@ import { Dispositivo } from './entities/dispositivo.entity';
 
 @Controller('dispositivos')
 export class DispositivosController {
+  [x: string]: any;
   constructor(private readonly dispositivoService: DispositivosService) {}
 
   @Post()
   async create (@Body() createDispositivoDto: CreateDispositivoDto): Promise<Dispositivo>{
     return this.dispositivoService.create(createDispositivoDto);
+  }
+
+  @Get()
+  async findAll(): Promise <Dispositivo[]>{
+    return this.dispositivoService.findAll();
   }
 }
