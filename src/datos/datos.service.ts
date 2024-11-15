@@ -19,6 +19,7 @@ export class DatosService {
     const ultimoDato = await this.datoRepository
       .createQueryBuilder('d')
       .select([
+        'disp.id AS id_dispositivo',
         'disp.imei AS imei',
         'd.latitud AS latitud',
         'd.longitud AS longitud',
@@ -27,8 +28,8 @@ export class DatosService {
         'e.nombre AS nombre',
         'e.apellidos AS apellidos',
         'e.numTel AS numTel',
-        'd.fechahra AS fechahra',
-        'd.id AS id_dispositivo'
+        'd.fechahra AS fechahra'
+        
       ])
       .innerJoin('d.dispositivo', 'disp')
       .innerJoin('disp.dispunidad', 'du')
