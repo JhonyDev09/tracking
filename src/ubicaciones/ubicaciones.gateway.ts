@@ -2,7 +2,8 @@ import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketSe
 import { Server, Socket } from "socket.io";
 import { DatosService } from "src/datos/datos.service";
 
-@WebSocketGateway(3003, {namespace: 'data'})
+@WebSocketGateway(3003, {namespace: 'data', cors:{origin:'*'}})
+
 export class UbicacionesGateway implements OnGatewayConnection, OnGatewayDisconnect{
     @WebSocketServer() server: Server;
 
