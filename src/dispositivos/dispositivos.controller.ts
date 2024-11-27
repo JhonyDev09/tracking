@@ -11,11 +11,43 @@ export class DispositivosController {
 
   @Post()
   async create (@Body() createDispositivoDto: CreateDispositivoDto): Promise<Dispositivo>{
-    return this.dispositivoService.create(createDispositivoDto);
+    try{
+      const dispositivo = await this.dispositivoService.create(createDispositivoDto);
+      return  dispositivo;
+    }catch(error){
+      throw error;
+    }
   }
 
   @Get()
   async findAll(): Promise <Dispositivo[]>{
     return this.dispositivoService.findAll();
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise <Dispositivo>{
+    return this.dispositivoService.findOne(+id);
+  }
+
+  @Patch(':id/edit')
+  async update(
+    @Param('id') id: string,
+    @Body() updateDispositivoDto: UpdateDispositivoDto,
+  ): Promise<Dispositivo>{
+    try{
+      const dispositivo = await this.dispositivoService.update(+id, updateDispositivoDto);
+      return dispositivo;
+    }catch (error){
+      throw error;
+    }
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise <void>{
+    try{   
+      return this.dispositivoService.remove(+id);
+    }catch (error){
+      throw error;
+    }
   }
 }

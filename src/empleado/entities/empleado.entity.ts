@@ -1,5 +1,6 @@
+import { Rol } from "src/rol/entities/rol.entity";
 import { UsrUnidad } from "src/usr-unidad/entities/usr-unidad.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn,  } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn,  } from "typeorm";
 
 
 @Entity('empleado')
@@ -25,15 +26,9 @@ export class Empleado {
     @Column()
     correo: string;
 
-    @Column()
+    @ManyToOne(() => Rol, (rol) => rol.empleados)
     rol: Rol;
 
     @OneToMany(() => UsrUnidad, (usrUnidad) => usrUnidad.chofer)
     usrunidad: UsrUnidad[];
-}
-
-export enum Rol {
-    ADMIN = 'ADMIN',
-    CHOFER = 'CHOFER',
-    MONITORISTA = 'MONITORISTA'
 }

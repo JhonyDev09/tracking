@@ -17,18 +17,30 @@ import { Unidade } from './unidades/entities/unidade.entity';
 import { UsrUnidad } from './usr-unidad/entities/usr-unidad.entity';
 import { Empleado } from './empleado/entities/empleado.entity';
 import { EmpleadoModule } from './empleado/empleado.module';
+import { RolModule } from './rol/rol.module';
+import { Rol } from './rol/entities/rol.entity';
+import { MarcasModule } from './marcas/marcas.module';
+import { ModelosModule } from './modelos/modelos.module';
+import { TiposModule } from './tipos/tipos.module';
+import { ColorModule } from './color/color.module';
+import { StatusModule } from './status/status.module';
+import { Marca } from './marcas/entities/marca.entity';
+import { Modelo } from './modelos/entities/modelo.entity';
+import { Tipo } from './tipos/entities/tipo.entity';
+import { Color } from './color/entities/color.entity';
+import { Status } from './status/entities/status.entity';
 
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'database-1.ctwks8qa0png.us-east-2.rds.amazonaws.com',
+      host: 'localhost',//'database-1.ctwks8qa0png.us-east-2.rds.amazonaws.com',
       port: 3306,
-      username: 'admin',
-      password: 'olivarsoto09',
+      username: 'root',//'admin',
+      password: '' ,//'olivarsoto09',
       database: 'tracking',
-      entities: [Dispositivo, Dato, DispUnidad, Unidade, UsrUnidad, Empleado],
+      entities: [Dispositivo, Dato, DispUnidad, Unidade, UsrUnidad, Empleado, Rol, Marca, Modelo, Tipo, Color, Status],
       synchronize: false,
     }),
     ConfigModule.forRoot({
@@ -41,7 +53,13 @@ import { EmpleadoModule } from './empleado/empleado.module';
     SocketModule,
     DispUnidadModule,
     UsrUnidadModule,
-    EmpleadoModule
+    EmpleadoModule,
+    RolModule,
+    MarcasModule,
+    ModelosModule,
+    TiposModule,
+    ColorModule,
+    StatusModule
   ],
   controllers: [AppController],
   providers: [AppService, UbicacionesGateway],

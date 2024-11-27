@@ -20,8 +20,8 @@ export class Dispositivo {
     @Column({length: 25})
     icc: string;
 
-   // @OneToMany(()=> Unidade, (unidad) => unidad.dispositivo)
-    //unidades: Unidade[];
+    @Column({length: 50})
+    numSerie: string;
 
     @OneToMany (()=> Dato, (dato) => dato.dispositivo)
     datos: Dato[]

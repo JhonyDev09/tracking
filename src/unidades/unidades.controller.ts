@@ -2,15 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UnidadesService } from './unidades.service';
 import { CreateUnidadeDto } from './dto/create-unidade.dto';
 import { UpdateUnidadeDto } from './dto/update-unidade.dto';
+import { Unidade } from './entities/unidade.entity';
 
 @Controller('unidades')
 export class UnidadesController {
   constructor(private readonly unidadesService: UnidadesService) {}
 
-  @Post()
-  create(@Body() createUnidadeDto: CreateUnidadeDto) {
-    return this.unidadesService.create(createUnidadeDto);
-  }
+ 
+  
 
   @Get()
   findAll() {

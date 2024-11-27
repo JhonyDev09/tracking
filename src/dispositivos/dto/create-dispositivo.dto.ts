@@ -17,5 +17,9 @@ export class CreateDispositivoDto {
     @IsNotEmpty()
     @IsString()
     icc: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    numSerie: string;
 
 }

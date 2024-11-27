@@ -8,7 +8,7 @@ export class DatosService {
   constructor(
     @InjectRepository(Dato)
     private readonly datoRepository: Repository<Dato>,  // Inyecta el repositorio de Dato
-  ) {}
+  ) { }
 
   async create(dato: any) {
     const nuevoDato = this.datoRepository.create(dato);
@@ -29,13 +29,13 @@ export class DatosService {
         'e.apellidos AS apellidos',
         'e.numTel AS numTel',
         'd.fechahra AS fechahra'
-        
+
       ])
       .innerJoin('d.dispositivo', 'disp')
       .innerJoin('disp.dispunidad', 'du')
       .innerJoin('du.unidad', 'u')
       .innerJoin('u.usrunidad', 'uu')
-      .innerJoin('uu.chofer', 'e') // Cambiado de 'empleado' a 'chofer'
+      .innerJoin('uu.chofer', 'e')
       .orderBy('d.fechahra', 'DESC')
       .limit(1)
       .getRawOne();
