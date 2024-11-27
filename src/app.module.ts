@@ -35,10 +35,10 @@ import { Status } from './status/entities/status.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',//'database-1.ctwks8qa0png.us-east-2.rds.amazonaws.com',
+      host: 'database-1.ctwks8qa0png.us-east-2.rds.amazonaws.com',//'localhost',
       port: 3306,
-      username: 'root',//'admin',
-      password: '' ,//'olivarsoto09',
+      username: 'admin',//'root',
+      password: 'olivarsoto09',
       database: 'tracking',
       entities: [Dispositivo, Dato, DispUnidad, Unidade, UsrUnidad, Empleado, Rol, Marca, Modelo, Tipo, Color, Status],
       synchronize: false,
