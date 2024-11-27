@@ -18,7 +18,7 @@ export class Empleado {
     numTel: string;
 
     @Column()
-    nombreUser: string;
+    nombreUsuario: string;
 
     @Column()
     contrasena: string;
