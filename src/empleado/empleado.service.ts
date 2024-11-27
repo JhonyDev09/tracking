@@ -28,14 +28,24 @@ export class EmpleadoService {
     }
   }
 
-  findAll(): Promise<Empleado[]> {
-    return this.empleadoRepository.find();
+  async findAll(): Promise<Empleado[]> {
+    const empleadosConRol = await this.empleadoRepository
+      .createQueryBuilder('empleado')
+      .innerJoinAndSelect('empleado.rol', 'rol') 
+      .select(['empleado', 'rol.rol'])
+      .getMany();
+
+    return empleadosConRol;
+  
   }
 
-  async findOne(id: number): Promise<Empleado>{
-    const empleado = await this.empleadoRepository.findOne({
-      where: {id}
-    });
+  async findOne(id: number): Promise<Empleado[]>{
+    const empleado = await this.empleadoRepository
+    .createQueryBuilder('empleado')
+    .innerJoinAndSelect('empleado.rol', 'rol') 
+    .select(['empleado', 'rol.rol'])
+    .where('empleado.id = :id', {id})
+    .getMany();
     if(!empleado){
       this.logger.log(`Empleado con id: ${id} no encontrado`)
     }
@@ -43,7 +53,7 @@ export class EmpleadoService {
    
   }
 
-  async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
+  async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado[]> {
     try{
       const empleado = await this.findOne(id)
       if(!empleado){

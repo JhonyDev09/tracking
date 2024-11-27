@@ -25,12 +25,12 @@ export class EmpleadoController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Empleado> {
+  async findOne(@Param('id') id: string): Promise<Empleado[]> {
     return this.empleadoService.findOne(+id);
   }
 
   @Patch(':id/edit')
-  async update(@Param('id') id: string, @Body() updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
+  async update(@Param('id') id: string, @Body() updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado[]> {
     try{
       const empleado = await this.empleadoService.update(+id, updateEmpleadoDto)
       return empleado;         
