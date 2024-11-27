@@ -23,6 +23,7 @@ export class EmpleadoService {
       this.logger.log(`Empleado guardado exitosamente: ${datosGuardados}`);
       return empleadoGuardado;
     }catch(error){
+      this.logger.log(error);
       throw new HttpException('Error al guardar el empleado', HttpStatus.BAD_REQUEST)
     }
   }
@@ -53,6 +54,7 @@ export class EmpleadoService {
       this.logger.log(`Datos actualizados correctamente: ${datosActualizados}`);
       return this.findOne(id);
     }catch(error){
+      this.logger.log(error);
       throw new HttpException('Error al actualizar el empleado', HttpStatus.BAD_REQUEST);
     }
   }
