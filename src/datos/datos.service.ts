@@ -20,6 +20,7 @@ export class DatosService {
       .createQueryBuilder('d')
       .select([
         'disp.id AS id_dispositivo',
+        'disp.numSerie AS numSerieDisp',
         'disp.imei AS imei',
         'd.latitud AS latitud',
         'd.longitud AS longitud',
