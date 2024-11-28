@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 import { Dispositivo } from 'src/dispositivos/entities/dispositivo.entity';
 import { Unidade } from 'src/unidades/entities/unidade.entity';
 
-@Entity()
+@Entity('dispunidad')
 export class DispUnidad {
   @PrimaryGeneratedColumn()
   id: number;

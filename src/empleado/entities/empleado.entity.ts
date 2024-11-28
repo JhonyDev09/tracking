@@ -27,7 +27,7 @@ export class Empleado {
     email: string;
 
     @ManyToOne(() => Rol, (rol) => rol.empleados)
-    @JoinColumn({ name: 'rolId' })  // Esto le dice a TypeORM que la columna que representa la relación se llama 'rolId'
+    @JoinColumn({ name: 'rolId' })  
     rol: Rol;
 
     @Column()

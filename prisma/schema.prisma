@@ -22,7 +22,7 @@ model Empleado {
   nombreUsuario String @unique @db.VarChar(50)
   contrasena String @db.VarChar(50)
   rol Rol @relation(fields: [rolId], references: [id])
-  rolId Int @default(1)
+  rolId Int 
   unidad usrUnidad[]
 }
 
@@ -41,7 +41,7 @@ model Dispositivo {
   imei String @db.VarChar(50)
   numTel String @db.VarChar(20)
   icc String @db.VarChar(25)
-  numSerie String @db.VarChar(50) @default("")
+  numSerie String @db.VarChar(50) 
   unidades dispUnidad[]
   Datos Dato[]
   comandos Comando[]
@@ -88,7 +88,7 @@ model Unidad {
   modeloId Int
   color Color @relation(fields: [colorId], references: [id])
   colorId Int
-  ano Int
+  ano String
   placas String @db.VarChar(20)
   tipo Tipo @relation(fields: [tipoId], references: [id])
   tipoId Int

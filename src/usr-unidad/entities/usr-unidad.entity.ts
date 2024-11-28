@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 import { Unidade } from 'src/unidades/entities/unidade.entity';
 import { Empleado } from 'src/empleado/entities/empleado.entity';
 
-@Entity()
+@Entity('usrunidad')
 export class UsrUnidad {
   @PrimaryGeneratedColumn()
   id: number;

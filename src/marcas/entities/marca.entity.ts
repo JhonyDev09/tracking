@@ -11,5 +11,5 @@ export class Marca {
     marca: string;
 
     @OneToMany(()=> Unidade, (unidad)=> unidad.marca)
-    unidades: Unidade[]
+    unidades: Unidade[];
 }

@@ -6,7 +6,7 @@ import { Dispositivo } from './entities/dispositivo.entity';
 
 @Controller('dispositivos')
 export class DispositivosController {
-  [x: string]: any;
+  
   constructor(private readonly dispositivoService: DispositivosService) {}
 
   @Post()

@@ -1,7 +1,7 @@
 import { Unidade } from "src/unidades/entities/unidade.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity('status')
 export class Status {
 
     @PrimaryGeneratedColumn()
