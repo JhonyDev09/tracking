@@ -17,27 +17,11 @@ export class DatosService {
 
   async obtenerUltimoDato(): Promise<any> {
     const ultimoDato = await this.datoRepository
-      .createQueryBuilder('d')
-      .select([
-        'disp.id AS id_dispositivo',
-        'disp.numSerie AS numSerieDisp',
-        'disp.imei AS imei',
-        'd.latitud AS latitud',
-        'd.longitud AS longitud',
-        'u.placas AS placas',
-        'u.numSerie AS numSerie',
-        'e.nombre AS nombre',
-        'e.apellidos AS apellidos',
-        'e.numTel AS numTel',
-        'd.fechahra AS fechahra'
-
-      ])
-      .innerJoin('d.dispositivo', 'disp')
-      .innerJoin('disp.dispunidad', 'du')
-      .innerJoin('du.unidad', 'u')
-      .innerJoin('u.usrunidad', 'uu')
-      .innerJoin('uu.chofer', 'e')
-      .orderBy('d.fechahra', 'DESC')
+      .createQueryBuilder('dato')
+      .innerJoinAndSelect('dato.empleado', 'empleado')
+      .innerJoinAndSelect('dato.unidad', 'unidad')
+      .select(['dato.imei', 'empleado.nombre', 'empleado.apellidos','empleado.numTel', 'unidad.placas', 'dato.latitud', 'dato.longitud'])
+      .orderBy('dato.fechahra', 'DESC')
       .limit(1)
       .getRawOne();
 
