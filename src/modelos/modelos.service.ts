@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Modelo } from './entities/modelo.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 
 @Injectable()
 export class ModelosService {
   constructor(
-    private readonly modeloRepository: Repository<Modelo>
+    @InjectRepository(Modelo)
+    private readonly modeloRepository: Repository<Modelo>,
   ){}
 
   findAll(): Promise<Modelo[]> {

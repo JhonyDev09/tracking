@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class MarcasService {
   constructor(
     @InjectRepository(Marca)
-    private readonly marcaRepository: Repository<Marca>
+    private readonly marcaRepository: Repository<Marca>,
   ){}
 
   findAll(): Promise <Marca[]> {
