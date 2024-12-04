@@ -8,8 +8,10 @@ export class Status {
     id: string;
 
     @Column()
-    status: string;
+    estatus: string;
 
     @OneToMany(()=> Unidade, (unidad)=> unidad.status)
     unidades: Unidade[];
 }
+
+
