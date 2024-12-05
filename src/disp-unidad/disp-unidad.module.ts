@@ -8,7 +8,7 @@ import { Unidade } from 'src/unidades/entities/unidade.entity';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DispUnidad, Dispositivo, Unidade]),],
+  imports: [TypeOrmModule.forFeature([DispUnidad, Dispositivo, Unidade])],
   controllers: [DispUnidadController],
   providers: [DispUnidadService],
 })

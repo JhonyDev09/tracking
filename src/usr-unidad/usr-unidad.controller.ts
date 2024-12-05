@@ -1,34 +1,63 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Delete, Body, HttpException, HttpStatus, Param, Get } from '@nestjs/common';
 import { UsrUnidadService } from './usr-unidad.service';
 import { CreateUsrUnidadDto } from './dto/create-usr-unidad.dto';
-import { UpdateUsrUnidadDto } from './dto/update-usr-unidad.dto';
 
-@Controller('usr-unidad')
+@Controller('chofer')
 export class UsrUnidadController {
-  constructor(private readonly usrUnidadService: UsrUnidadService) {}
+  constructor(private readonly usrunidadService: UsrUnidadService) {}
 
-  @Post()
-  create(@Body() createUsrUnidadDto: CreateUsrUnidadDto) {
-    return this.usrUnidadService.create(createUsrUnidadDto);
+  // Endpoint para asignar un chofer a una unidad
+  @Post('asignar')
+  async asignarChofer(@Body() body: CreateUsrUnidadDto) {
+    try {
+      const resultado = await this.usrunidadService.asignarChofer(
+        body.unidadId,
+        body.choferId,
+      );
+      return resultado;
+    } catch (error) {
+      // Aquí se manejan los errores de asignación
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.response.message || 'Error al asignar chofer',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.usrUnidadService.findAll();
+  @Get('listado')
+  async obtenerAsignacionesConDetalles() {
+    try {
+      const asignaciones = await this.usrunidadService.getAsignacionesConDetalles();
+      return asignaciones;
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.response.message || 'Error al obtener asignaciones con detalles',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usrUnidadService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsrUnidadDto: UpdateUsrUnidadDto) {
-    return this.usrUnidadService.update(+id, updateUsrUnidadDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usrUnidadService.remove(+id);
+  // Endpoint para desasignar un chofer de una unidad
+  @Delete('desasignar/:id')
+  async desasignarChofer(@Param('id') id: number) {
+    try {
+      const resultado = await this.usrunidadService.desasignarChofer(id);
+      return resultado;
+    } catch (error) {
+      // Aquí se manejan los errores de desasignación
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.response.message || 'Error al desasignar chofer',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

@@ -13,6 +13,6 @@ import { Tipo } from 'src/tipos/entities/tipo.entity';
   imports: [Unidade, Marca, Modelo, Status, Color, Tipo, TypeOrmModule.forFeature([Unidade])],
   controllers: [UnidadesController],
   providers: [UnidadesService],
-  exports: [UnidadesService]
+  exports: [UnidadesService, TypeOrmModule.forFeature([Unidade])]
 })
 export class UnidadesModule {}

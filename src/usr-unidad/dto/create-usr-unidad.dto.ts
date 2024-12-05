@@ -1,1 +1,4 @@
-export class CreateUsrUnidadDto {}
+export class CreateUsrUnidadDto {
+    choferId: number;
+    unidadId: number;
+}

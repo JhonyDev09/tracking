@@ -16,6 +16,4 @@ export class DispUnidad {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fechaAsig: Date;
 
-
-
 }
