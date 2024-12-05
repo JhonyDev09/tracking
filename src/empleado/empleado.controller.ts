@@ -23,6 +23,11 @@ export class EmpleadoController {
   async findAll() {
     return this.empleadoService.findAll();
   }
+  
+  @Get('choferes')
+  async getAllChoferes() {
+    return this.empleadoService.getAllChoferes();
+  }
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Empleado[]> {

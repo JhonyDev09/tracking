@@ -29,6 +29,7 @@ import { Modelo } from './modelos/entities/modelo.entity';
 import { Tipo } from './tipos/entities/tipo.entity';
 import { Color } from './color/entities/color.entity';
 import { Status } from './status/entities/status.entity';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -59,7 +60,8 @@ import { Status } from './status/entities/status.entity';
     ModelosModule,
     TiposModule,
     ColorModule,
-    StatusModule
+    StatusModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService, UbicacionesGateway],

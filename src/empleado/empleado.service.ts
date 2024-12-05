@@ -53,6 +53,14 @@ export class EmpleadoService {
    
   }
 
+  async getAllChoferes(): Promise<Empleado[]>{
+    const choferes = await this.empleadoRepository
+    .createQueryBuilder('empleado')
+    .where('empleado.rolId = :rolId', { rolId: 1 })
+    .getMany();
+    return choferes;
+  }
+
   async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado[]> {
     try{
       const empleado = await this.findOne(id)
@@ -74,4 +82,6 @@ export class EmpleadoService {
     await this.empleadoRepository.remove(empleado);
     this.logger.log('Empleado elimindado')
   }
+
+  
 }
