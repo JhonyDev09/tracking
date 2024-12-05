@@ -24,4 +24,10 @@ export class AuthController {
       throw error; // Lanza el error al cliente
     }
   }
+
+  @Post('logout')
+  logout() {
+    this.logger.log('Cierre de sesión realizado exitosamente');
+    return { message: 'Sesión cerrada' };
+  }
 }

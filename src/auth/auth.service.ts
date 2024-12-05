@@ -4,10 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Empleado } from '../empleado/entities/empleado.entity';
 import * as bcrypt from 'bcrypt';
+import * as redis from 'redis';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-
+  private readonly redisClient = redis.createClient(); 
   constructor(
     @InjectRepository(Empleado)
     private readonly empleadoRepository: Repository<Empleado>,
@@ -64,4 +65,27 @@ export class AuthService {
       throw error;
     }
   }
+
+  async logout(token: string): Promise<{ message: string }> {
+    try {
+      // Agregar token a la lista negra (blacklist) de Redis con su tiempo de expiración
+      await this.redisClient.setEx(token, 3600, 'blacklisted'); // Token invalidado por 1 hora
+
+      this.logger.log(`Token invalidado: ${token}`);
+      return { message: 'Sesión cerrada' };
+    } catch (error) {
+      this.logger.error('Error al cerrar sesión', error.stack);
+      throw new InternalServerErrorException('Error al cerrar sesión.');
+    }
+  }
+
+  async validateToken(token: string): Promise<boolean> {
+    try {
+      const result = await this.redisClient.get(token);
+      return result === null; // Si el token no está en blacklist, es válido
+    } catch (err) {
+      throw new InternalServerErrorException('Error al validar el token.');
+    }
+  }
+ 
 }
