@@ -18,7 +18,7 @@ export class UbicacionesGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     async enviarUltimoDato() {
-      const ultimoDato = await this.datosService.obtenerUltimoDato();
+      const ultimoDato = await this.datosService.obtenerUltimosDatos();
       this.server.emit('ultimoDato', ultimoDato);
       console.log('Enviando último dato al frontend:', ultimoDato);
     }

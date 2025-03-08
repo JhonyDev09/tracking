@@ -15,41 +15,43 @@ export class DatosService {
     return await this.datoRepository.save(nuevoDato);
   }
 
-  async obtenerUltimoDato(): Promise<any> {
-    const ultimoDato = await this.datoRepository
-    .createQueryBuilder('dato')
-    .innerJoinAndSelect('dato.dispositivo', 'dispositivo')       // Relación con Dispositivo
-    .innerJoinAndSelect('dispositivo.dispunidad', 'dispunidad')   // Relación con DispUnidad
-    .innerJoinAndSelect('dispunidad.unidad', 'unidad')           // Relación con Unidad
-    .innerJoinAndSelect('unidad.usrunidad', 'usrunidad')         // Relación con UsrUnidad
-    .innerJoinAndSelect('usrunidad.chofer', 'empleado')        // Relación con Empleado
-    .select([
-      'dispositivo.id AS id_dispositivo',
-      'dispositivo.numSerie AS numSerieDisp',
-      'dispositivo.nombre AS nombreDisp',
-      'dispositivo.imei AS imei',
-      'dato.latitud AS latitud',
-      'dato.longitud AS longitud',
-      'unidad.placas AS placas',
-      'unidad.numSerie AS numSerie',
-      'empleado.nombre AS nombre',
-      'empleado.apellidos AS apellidos',
-      'empleado.numTel AS numTel',
-      'dato.fechahra AS fechahra'
-    ])
-    .orderBy('dato.fechahra', 'DESC')
-    .limit(1)
-    .getRawOne();
-
-    if (!ultimoDato) {
-      console.error('No se encontró el último dato.');
-      return null;
+  async obtenerUltimosDatos(): Promise<any[]> {
+    const ultimosDatos = await this.datoRepository
+      .createQueryBuilder('dato')
+      .innerJoinAndSelect('dato.dispositivo', 'dispositivo')
+      .innerJoinAndSelect('dispositivo.dispunidad', 'dispunidad')
+      .innerJoinAndSelect('dispunidad.unidad', 'unidad')
+      .innerJoinAndSelect('unidad.usrunidad', 'usrunidad')
+      .innerJoinAndSelect('usrunidad.chofer', 'empleado')
+      .select([
+        'dispositivo.id AS id_dispositivo',
+        'dispositivo.numSerie AS numSerieDisp',
+        'dispositivo.nombre AS nombreDisp',
+        'dispositivo.imei AS imei',
+        'dato.latitud AS latitud',
+        'dato.longitud AS longitud',
+        'unidad.placas AS placas',
+        'unidad.numSerie AS numSerie',
+        'empleado.nombre AS nombre',
+        'empleado.apellidos AS apellidos',
+        'empleado.numTel AS numTel',
+        'dato.fechahra AS fechahra'
+      ])
+      .where(qb => {
+        const subQuery = qb.subQuery()
+          .select('MAX(dato.fechahra)')
+          .from(Dato, 'dato')
+          .where('dato.dispositivoId = dispositivo.id')
+          .getQuery();
+        return `dato.fechahra = ${subQuery}`;
+      })
+      .getRawMany();
+  
+    if (!ultimosDatos.length) {
+      console.error('No se encontraron datos.');
+      return [];
     }
-
-    return ultimoDato;
+  
+    return ultimosDatos;
   }
-
-
 }
-
-
